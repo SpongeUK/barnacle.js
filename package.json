@@ -16,7 +16,6 @@
   "author": "Chris Jones",
   "license": "BSD",
   "dependencies": {
-    "sinon": "~1.5.0"
   },
   "devDependencies": {
     "sinon": "~1.5.0",

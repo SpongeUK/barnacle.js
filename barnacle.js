@@ -2,28 +2,50 @@
   if (typeof exports === 'object') {
     module.exports = factory;
   } else {
-    root.API = factory(root.jQuery);
+    var library = factory();
+    root.API = library['SCORM-1.2'];
+    root.API_1484_11 = library['SCORM-2004'];
   }
-}(this, function ($) {
-  if(!$) throw new Error('jQuery (or compatible library) is required.');
-  var scorm = {};
+}(this, function () {
+  var scorm = {},
       cmi = {
         empty: '',
         bool : {
-          TRUE: "true",
-          FALSE: "false"
-        }
+          TRUE : "true",
+          FALSE : "false"
+        },
+        score : {
+          raw : 'cmi.core.score.raw',
+          min : 'cmi.core.score.min',
+          max : 'cmi.core.score.max'
+        },
+        lesson : {
+          status : 'cmi.core.lesson_status',
+          mode : 'cmi.core.lesson_mode'
+        },
+        suspend : 'cmi.suspend_data',
+        sessionTime : 'cmi.session_time'
       },
       defaults = {
-        serverUrl : 'commit'
+        onCommit : function (data) {
+          if(options.debug)
+            console.log('Commiting.');
+        },
+        debug : false
       },
       options = {},
       store = {},
+      lastError,
       hasCommitted = false;
 
+  var ok = function () {
+    lastError = "0";
+    return cmi.bool.TRUE;
+  };
+
   scorm.setup = function (opts){
-    options.serverUrl = opts.serverUrl;
-    options.debug = opts.debug;
+    options.debug = !this.console ? false : opts.debug;
+    options.onCommit = opts.onCommit;
     options.hasBeenSetup = true;
   };
 
@@ -31,56 +53,104 @@
     scorm.setup(defaults);
   };
 
-  scorm.canCommit = function () {
-    if(hasCommitted) return false;
-    return (store['cmi.core.score.raw'] >= 1) && (store['cmi.core.lesson_status'] === 'passed');
-  };
-
-  //SCORM 1.2
-  scorm.LMSInitialize = function () {
+  scorm.initialise = function () {
     if(options.hasBeenSetup !== true) {
       scorm.defaultSetup();
     }
+    store[cmi.lesson.mode] = 'normal';
+    store[cmi.lesson.status] = 'not attempted';
     hasCommitted = false;
+    return ok();
+  };
+
+  scorm.terminate = function () {
     return cmi.bool.TRUE;
   };
-  scorm.LMSFinish = function () {
-    return cmi.bool.TRUE;
-  };
-  scorm.LMSGetValue = function (ref) {
+
+  scorm.getValue = function (ref) {
+    if(options.debug)
+      console.log('get: ' + ref + ' ' + store[ref]);
+
     return store[ref] || cmi.empty;
   };
-  scorm.LMSSetValue = function (ref, value) {
+
+  scorm.setValue = function (ref, value) {
     if(options.debug)
       console.log(ref, value);
 
-    if(store[ref] === value) return cmi.bool.TRUE;
+    if(store[ref] === value) return ok();
     store[ref] = value;
     hasCommitted = false;
-
-    return cmi.bool.TRUE;
+    return ok();
   };
-  scorm.LMSCommit = function () {
+
+  scorm.canCommit = function () {
+    if(hasCommitted) return false;
+    return (store[cmi.score.raw] >= 1) && (store[cmi.lesson.status] === 'passed');
+  };
+
+  scorm.commit = function () {
     if(scorm.canCommit()) {
-      console.log('committing...');
-      $.post(options.serverUrl, {
-        values: store,
-        score: store['cmi.core.score.raw'],
-        lessonStatus: store['cmi.core.lesson_status']
-      });
+      var data = {
+        "score": store[cmi.score.raw],
+        "lessonStatus": store[cmi.lesson.status]
+      };
+
+      if(options.onCommit)
+        options.onCommit(data);
+      defaults.onCommit(data);
+
       hasCommitted = true;
     }
-    return cmi.bool.TRUE;
+    return ok();
   };
-  scorm.LMSGetLastError = function () {
-    return '0';
+
+  scorm.getLastError = function () {
+    return lastError || "0";
   };
-  scorm.LMSGetErrorString = function (errorCode) {
+
+  scorm.getErrorString = function (errorCode) {
+    return {
+      "0" : "No Error",
+      "101" : "General Exception",
+      "102" : "General Initialization Failure",
+      "103" : "Already Initialized",
+      "104" : "Content Instance Terminated",
+      "111" : "General Termination Failure",
+      "112" : "Termination Before Initialization",
+      "113" : "Termination After Termination",
+      "123" : "Retrieve Data Before Initialization",
+      "132" : "Store Data Before Initialization",
+      "133" : "Store Data After Termination",
+      "142" : "Commit Before Initialization",
+      "201" : "General Argument Error",
+      "301" : "General Get Failure",
+      "351" : "General Set Failure",
+      "391" : "General Commit Failure",
+      "401" : "Undefined Data Model Element",
+      "402" : "Unimplemented Data Model Element",
+      "403" : "Data Model Element Value Not Initialized",
+      "404" : "Data Model Element Is Read Only ",
+      "405" : "Data Model Element Is Write Only",
+      "406" : "Data Model Element Type Mismatch",
+      "407" : "Data Model Element Value Out Of Range",
+      "408" : "Data Model Dependency Not Established"
+    }[errorCode] || "";
+  };
+
+  scorm.getDiagnostic = function (errorCode) {
     return '';
   };
-  scorm.LMSGetDiagnostic = function (errorCode) {
-    return '';
-  };
+
+  scorm.LMSInitialize = scorm.Initialize = scorm.initialise;
+  scorm.LMSFinish = scorm.Terminate = scorm.terminate;
+  scorm.LMSGetValue = scorm.GetValue = scorm.getValue;
+  scorm.LMSSetValue = scorm.SetValue = scorm.setValue;
+  scorm.LMSCommit = scorm.Commit = scorm.commit;
+  scorm.LMSGetLastError = scorm.GetLastError = scorm.getLastError;
+  scorm.LMSGetErrorString = scorm.GetErrorString = scorm.getErrorString;
+
+  scorm.cmi = cmi;
 
   return scorm;
 }));

@@ -1,13 +1,11 @@
 describe('Given I have a SCORM compliant interface', function () {
   var expect = require('expect.js'),
       sinon = require('sinon'),
-      jQuery = {
-        post: sinon.stub()
-      },
-      API = require('../../Web/scripts/barnacle.js')(jQuery);
+      onCommit = sinon.stub(),
+      API = require('../barnacle.js')();
 
   beforeEach(function () {
-    jQuery.post.reset();
+    onCommit.reset();
     API.defaultSetup();
   });
 
@@ -34,40 +32,37 @@ describe('Given I have a SCORM compliant interface', function () {
     });
   });
 
-  describe('when commiting with a default setup', function(){
-    it('should post the data to default server url', function(){
+ describe('when commiting with a configured setup', function(){
+    it('should callback', function(){
+      API.setup({onCommit : onCommit});
       API.LMSInitialize('');
       API.LMSSetValue('cmi.core.lesson_status', 'passed');
       API.LMSSetValue('cmi.core.score.raw', '81');
       API.LMSCommit('');
-      expect(jQuery.post.calledWith('commit')).to.be(true);
+      expect(onCommit.called).to.be(true);
     });
   });
 
-  describe('when commiting with a configured setup', function(){
-    it('should post the data to configured server url', function(){
-      var serverUrl = 'Course/Commit/HS002';
-      API.setup({ serverUrl: serverUrl});
+ describe('when commiting with a configured setup but no data', function(){
+    it('should not callback', function(){
+      API.setup({onCommit : onCommit});
       API.LMSInitialize('');
-      API.LMSSetValue('cmi.core.lesson_status', 'passed');
-      API.LMSSetValue('cmi.core.score.raw', '81');
       API.LMSCommit('');
-      expect(jQuery.post.calledWith(serverUrl)).to.be(true);
+      expect(onCommit.called).to.be(false);
     });
   });
 
   describe('when commiting twice when nothing has changed', function(){
     it('should not post', function(){
-      var serverUrl = 'Course/Commit/HS002';
-      API.setup({ serverUrl: serverUrl});
+      API.setup({onCommit : onCommit});
       API.LMSInitialize('');
       API.LMSSetValue('cmi.core.lesson_status', 'passed');
       API.LMSSetValue('cmi.core.score.raw', '81');
       API.LMSCommit('');
 
-      jQuery.post.reset();
+      onCommit.reset();
       API.LMSCommit('');
-      expect(jQuery.post.called).to.be(false);
+      expect(onCommit.called).to.be(false);
     });
   });
 
