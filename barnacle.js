@@ -3,8 +3,8 @@
     module.exports = factory;
   } else {
     var library = factory();
-    root.API = library['SCORM-1.2'];
-    root.API_1484_11 = library['SCORM-2004'];
+    root.API = library;
+    root.API_1484_11 = library;
   }
 }(this, function () {
   var scorm = {},
