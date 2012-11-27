@@ -85,8 +85,7 @@
   };
 
   scorm.canCommit = function () {
-    if(hasCommitted) return false;
-    return (store[cmi.score.raw] >= 1) && (store[cmi.lesson.status] === 'passed');
+    return !hasCommitted;
   };
 
   scorm.commit = function () {
