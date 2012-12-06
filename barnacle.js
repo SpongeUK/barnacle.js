@@ -92,7 +92,8 @@
     if(scorm.canCommit()) {
       var data = {
         "score": store[cmi.score.raw],
-        "lessonStatus": store[cmi.lesson.status]
+        "lessonStatus": store[cmi.lesson.status],
+        "suspend_data": store[cmi.suspend]
       };
 
       if(options.onCommit)
