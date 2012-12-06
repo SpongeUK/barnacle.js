@@ -44,7 +44,7 @@
   };
 
   scorm.setup = function (opts){
-    options.debug = !console ? false : opts.debug;
+    options.debug = !window.console ? false : opts.debug;
     options.onCommit = opts.onCommit;
     options.hasBeenSetup = true;
   };
