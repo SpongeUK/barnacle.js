@@ -1,4 +1,4 @@
-﻿(function (root, factory) {
+(function (root, factory) {
   if (typeof exports === 'object') {
     module.exports = factory;
   } else {
@@ -14,11 +14,13 @@
           TRUE : "true",
           FALSE : "false"
         },
+        successStatus: 'cmi.success_status',
         score : {
           raw : 'cmi.core.score.raw',
           min : 'cmi.core.score.min',
           max : 'cmi.core.score.max'
         },
+        scoreScaled: 'cmi.score.scaled ',
         lesson : {
           status : 'cmi.core.lesson_status',
           mode : 'cmi.core.lesson_mode'
@@ -43,10 +45,18 @@
     return cmi.bool.TRUE;
   };
 
+  scorm.resetAllValues = function () {
+    store = {};
+  };
+
   scorm.setup = function (opts){
-    options.debug = !window.console ? false : opts.debug;
+    options.debug = (typeof console !== undefined) ?  opts.debug : false;
     options.onCommit = opts.onCommit;
     options.hasBeenSetup = true;
+  };
+
+  function isDefined(obj) {
+    return typeof obj !== 'undefined' && obj;
   };
 
   scorm.defaultSetup = function (opts){
@@ -54,6 +64,7 @@
   };
 
   scorm.initialise = function () {
+    store = {};
     if(options.hasBeenSetup !== true) {
       scorm.defaultSetup();
     }
@@ -71,8 +82,28 @@
     if(options.debug)
       console.log('get: ' + ref + ' ' + store[ref]);
 
+    if(ref === 'cmi.interactions._count')
+        return getInteractionCount();
+
     return store[ref] || cmi.empty;
   };
+
+  function getInteractionCount() {
+      var interactionCount = 0;
+      var regex = /^cmi.interactions.(\d+)/;
+
+      for(var property in store)
+      {
+          var matches = regex.exec(property);
+          if(matches && matches.length > 1)
+          {
+              if(parseInt(matches[1]) >= interactionCount)
+                  interactionCount = parseInt(matches[1]) + 1;
+          }
+      }
+
+      return interactionCount;
+  }
 
   scorm.setValue = function (ref, value) {
     if(options.debug)
@@ -91,9 +122,11 @@
   scorm.commit = function () {
     if(scorm.canCommit()) {
       var data = {
-        "score": store[cmi.score.raw],
-        "lessonStatus": store[cmi.lesson.status],
-        "suspend_data": store[cmi.suspend]
+        "score": store[cmi.scoreScaled] || store[cmi.score.raw],
+        "lessonStatus": store[cmi.successStatus] || store[cmi.lesson.status],
+        "suspend_data": store[cmi.suspend],
+        "startDate": store.startDate,
+        "state" : store
       };
 
       if(options.onCommit)
