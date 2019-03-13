@@ -97,7 +97,7 @@
           var matches = regex.exec(property);
           if(matches && matches.length > 1)
           {
-              if(parseInt(matches[1]) >= interactionCount)
+             if(parseInt(matches[1]) >= interactionCount)
                   interactionCount = parseInt(matches[1]) + 1;
           }
       }

@@ -15,11 +15,11 @@
   ],
   "author": "Chris Jones",
   "license": "BSD",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "sinon": "~1.5.0",
     "expect.js": "~0.2.0",
-    "mocha": "~1.6.0"
+    "mocha": "~1.6.0",
+    "sinon": "~1.5.0",
+    "typescript": "^3.3.3"
   }
 }
