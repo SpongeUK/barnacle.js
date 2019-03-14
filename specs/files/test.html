@@ -1,0 +1,19 @@
+<html>
+<head>
+    <script src="../../dist/Barnacle.js"></script>
+</head>
+<body>
+<script type="application/javascript">
+
+    function onCommit(data) {
+        console.log("Got", data);
+    }
+
+    var b = new Barnacle.ScormDriver({ onCommit });
+    b.attach(window);
+    Barnacle.ScormDriver.launch("Sponge_Learning_Through_Play_Scenario_SCORM_011216/index_lms.html");
+
+</script>
+
+</body>
+</html>
