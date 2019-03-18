@@ -3,7 +3,7 @@ import { Dictionary } from "../Dictionary";
 
 export class ObjectStore implements IStore<string> {
 
-    constructor( readonly store: Dictionary = {} ) {}
+    constructor( readonly store: Dictionary<any> = {} ) {}
 
     get( key: string ): string {
         return this.store[key];
@@ -25,7 +25,7 @@ export class ObjectStore implements IStore<string> {
         return keys.map( key => new KeyValuePair( key, this.store[key] ) );
     }
 
-
-
-
+    contents(): {} {
+        return this.store;
+    }
 }

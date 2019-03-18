@@ -1,4 +1,4 @@
-import { IStore, KeyValuePair } from "./Storage/IStore";
+import { IStore, KeyValuePair } from "./IStore";
 
 export class List<T> implements IStore<T> {
 
@@ -57,6 +57,10 @@ export class List<T> implements IStore<T> {
 
     filter ( predicate: ( key: string ) => boolean ): Array<KeyValuePair<T>> {
         return this.store.filter( predicate );
+    }
+
+    contents(): {} {
+        return this.store;
     }
 
 }

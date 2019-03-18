@@ -4,16 +4,35 @@
 </head>
 <body>
 <script type="application/javascript">
-
-    function onCommit(data) {
-        console.log("Got", data);
+    var db = {};
+    function onCommit( data, v ) {
+        console.log( "Got", data, v );
+        db[v] = data;
     }
 
-    var b = new Barnacle.ScormDriver({ onCommit });
-    b.attach(window);
-    Barnacle.ScormDriver.launch("Sponge_Learning_Through_Play_Scenario_SCORM_011216/index_lms.html");
+    var b = new Barnacle.ScormDriver( { onCommit } );
+    b.attach( window );
+
+    function open_sponge_Scorm12() {
+
+        b.load( "SCORM 1.2", db["SCORM 1.2"] );
+        Barnacle.ScormDriver.launch( "Sponge_Learning_Through_Play_Scenario_SCORM_011216/index_lms.html" );
+    }
+
+    function open_sponge_Scorm2004() {
+        b.load( "SCORM 2004 4th Edition", db["SCORM 2004 4th Edition"] );
+        Barnacle.ScormDriver.launch( "2004_module/2004 test - Storyline output/index_lms.html" );
+    }
+
 
 </script>
+
+<p>
+    <button onclick="open_sponge_Scorm12()">Open SCORM 1.2</button>
+</p>
+<p>
+    <button onclick="open_sponge_Scorm2004()">Open SCORM 2004</button>
+</p>
 
 </body>
 </html>

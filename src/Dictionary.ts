@@ -1,1 +1,1 @@
-export type Dictionary = { [index: string] : string };
+export type Dictionary<T> = { [index: string] : T };

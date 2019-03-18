@@ -6,6 +6,8 @@ export interface IStore<T> {
     has( key: string ): boolean;
 
     filter( predicate: (key: string) => boolean ) : Array<KeyValuePair<T>>;
+
+    contents() : {};
 }
 
 export class KeyValuePair<T> {

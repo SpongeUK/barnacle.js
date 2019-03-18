@@ -1,5 +1,6 @@
 import { CMIBool, CMIElement, CMIErrorCode, CMIList } from "./CMITypes";
-import { ScormVersions, UnifiedScormSignature } from "./UnifiedScorm";
+import { UnifiedScormSignature } from "./UnifiedScorm";
+import { ScormVersions } from "./ScormVersions";
 
 export interface Scorm12Signature {
     LMSInitialize      : ( empty: "" ) => CMIBool,
