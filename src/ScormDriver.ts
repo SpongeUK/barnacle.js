@@ -3,8 +3,9 @@ import { Scorm2004Signature, Scorm2004Wrapper } from "./Scorm2004";
 import { UnifiedScorm, UnifiedScormSignature } from "./UnifiedScorm";
 import { BarnacleOptions } from "./BarnacleOptions";
 import { ScormVersions } from "./ScormVersions";
-import { StateLoader } from "./StateLoader";
 import { Dictionary } from "./Dictionary";
+import { DictionaryBulkOperation } from "./DictionaryBulkOperation";
+import { ScormLauncher } from "./ScormLauncher";
 
 interface Scorm12 {
     API: Scorm12Signature | undefined
@@ -38,27 +39,24 @@ export class ScormDriver implements Scorm12, Scorm2004 {
         win.API_1484_11 = this.API_1484_11;
     }
 
-    load( version: ScormVersions, state: Dictionary<any> ) {
-        if ( version === ScormVersions.v12 ) {
-            StateLoader.loadKeyValuePairs( ( key: string, value: any ) => this.API.LMSSetValue( key, value ), state );
-        } else if ( version === ScormVersions.v2004 ) {
-            StateLoader.loadKeyValuePairs( ( key: string, value: any ) => this.API_1484_11.SetValue( key, value ), state );
-        }
+    launch ( url: string, name: string = "course", win = window ) {
+        return ScormLauncher.launch( url, name, win );
     }
 
-    static launch( url: string, name: string = "course", win = window ): any {
-        let features = [
-            'height=' + win.screen.height * 0.90,
-            'width=' + win.screen.width * 0.99,
-            'top=0',
-            'left=0',
-            'fullscreen=no',
-            'menubar=no',
-            'toolbar=no',
-            'scrollbars=1'
-        ].join( ',' );
+    static launch( url: string, name: string = "course", win = window ) {
+        return ScormLauncher.launch( url, name, win );
+    }
 
-        win.open( url, name, features );
+    load( version: ScormVersions, state: Dictionary<any> ) {
+        let loadOperation = new DictionaryBulkOperation( state );
+
+        if ( version === ScormVersions.v12 ) {
+            loadOperation.performForAll( ( key: string, value: any ) => this.API.LMSSetValue( key, value ) );
+        } else if ( version === ScormVersions.v2004 ) {
+            loadOperation.performForAll( ( key: string, value: any ) => this.API_1484_11.SetValue( key, value ));
+        } else {
+            throw new Error("Unsupported version");
+        }
     }
 
     static defaultImplementationFactory( options: BarnacleOptions = BarnacleOptions.Empty ): UnifiedScormSignature {
