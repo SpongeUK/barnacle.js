@@ -47,7 +47,7 @@ export class ScormDriver implements Scorm12, Scorm2004 {
         return ScormLauncher.launch( url, name, win );
     }
 
-    load( version: ScormVersions, state: Dictionary<any> ) {
+    load( state: Dictionary<any>, version: ScormVersions ) {
         let loadOperation = new DictionaryBulkOperation( state );
 
         if ( version === ScormVersions.v12 ) {
