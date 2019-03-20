@@ -19,6 +19,6 @@ module.exports = {
         filename: 'Barnacle.js',
         path: path.resolve(__dirname, 'dist'),
         library: 'Barnacle',
-        libraryTarget: "var"
+        libraryTarget: "umd"
     }
 };

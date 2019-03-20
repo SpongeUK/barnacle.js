@@ -2,12 +2,15 @@ describe( 'Given I have a SCORM compliant interface', function () {
     var expect = require( 'expect.js' ),
         sinon = require( 'sinon' ),
         onCommit = sinon.stub(),
-        Barnacle = require( '../build/barnacle.js' ).Barnacle,
-        barnacle = new Barnacle(),
-        API = barnacle.API;
+        Window = require( 'window' ),
+        window = new Window(),
+        { ScormDriver } = require( '../src/ScormDriver' ),
+        API = null;
 
     beforeEach( function () {
         onCommit.reset();
+        let scormDriver = new ScormDriver( { onCommit }, ScormDriver.defaultImplementationFactory, ScormDriver.defaultImplementationFactory, window );
+        API = scormDriver.API;
     } );
 
     describe( 'when I initialise it', function () {
@@ -35,7 +38,6 @@ describe( 'Given I have a SCORM compliant interface', function () {
 
     describe( 'when committing with a configured setup', function () {
         it( 'should callback', function () {
-            barnacle.setup( { onCommit } );
             API.LMSInitialize( '' );
             API.LMSSetValue( 'cmi.core.lesson_status', 'passed' );
             API.LMSSetValue( 'cmi.core.score.raw', '81' );

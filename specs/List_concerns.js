@@ -1,7 +1,6 @@
 const expect = require( 'expect.js' );
-
-const { ObjectStore } = require( "../build/Storage/ObjectStore" );
-const { List } = require( '../build/List' );
+const { ObjectStore } = require( "../src/Storage/ObjectStore" );
+const { List } = require( '../src/Storage/List' );
 
 describe( "Given I have a list of interactions in a store and I create list for that store", () => {
 

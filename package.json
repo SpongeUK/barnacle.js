@@ -17,13 +17,22 @@
   "license": "BSD",
   "dependencies": {},
   "devDependencies": {
+    "@types/promise": "^7.1.30",
+    "@types/promise-polyfill": "^6.0.3",
+    "@types/whatwg-fetch": "0.0.33",
+    "@types/xmldom": "^0.1.29",
     "expect.js": "~0.2.0",
     "mocha": "^6.0.2",
+    "promise": "^8.0.2",
+    "promise-polyfill": "8.1.0",
     "sinon": "~1.5.0",
     "source-map-loader": "^0.2.4",
     "ts-loader": "^5.3.3",
+    "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.2.3",
+    "whatwg-fetch": "^3.0.0",
+    "window": "^4.2.6"
   }
 }
