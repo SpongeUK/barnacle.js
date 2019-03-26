@@ -7,7 +7,7 @@ export type ManifestParser = ( content: string ) => Manifest;
 
 export class ManifestLoader {
 
-    constructor( readonly parser: ManifestParser = DefaultManifestParser ) {
+    constructor( readonly parser: ManifestParser = ManifestDOMParser ) {
     }
 
     async load( url: string ): Promise<Manifest> {
@@ -17,8 +17,12 @@ export class ManifestLoader {
     }
 }
 
-export function DefaultManifestParser( content: string ): Manifest {
+export function ManifestDOMParser( content: string ): Manifest {
+    const selector = 'resources resource[type="webcontent"]';
+    const defaultPage = "/";
+
     let document = new DOMParser().parseFromString( content, "application/xml" );
-    document.querySelector("resources" )
-    return new Manifest( new Resource( "index_lms.html" ) );
+    let resource = document.querySelector( selector );
+    let startPage = resource ? resource.getAttribute( "href" ) || defaultPage : defaultPage;
+    return new Manifest( new Resource( startPage ) );
 }

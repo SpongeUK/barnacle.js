@@ -94,6 +94,9 @@ When you need to resume the session, call `load` before you launch the content.
 API Reference
 -------------
 
+ScormDriver
+===========
+
 A `ScormDriver` has three methods available: 
 
 Attach
@@ -129,3 +132,18 @@ The `ScormDriver` will open the content in a new Window.
 `newWindowName` - the name for the new window. Default: `"course"`.
 
 `openerWindow` - the window object that will open the new window. Default: `window`
+
+
+ManifestLoader
+=======
+
+A `ManifestLoader` has a single method `load` to async get a SCORM manifest.
+
+```javascript
+
+let loader = new Barnacle.ManifestLoader();
+let manifest = await loader.load( "my_scorm_package/imsmanifest.xml" );
+
+Barnacle.ScormDriver.launch( "my_scorm_package/${manifest.webContent.href}" );
+
+```

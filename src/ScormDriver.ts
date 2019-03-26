@@ -9,6 +9,8 @@ import { ScormLauncher } from "./ScormLauncher";
 import { IOpener } from "./Opener/IOpener";
 import { WindowOpener } from "./Opener/WindowOpener";
 
+export { ManifestLoader } from "./Manifest/ManifestLoader";
+
 interface Scorm12 {
     API: Scorm12Signature | undefined
 }
