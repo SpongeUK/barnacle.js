@@ -73,9 +73,21 @@ When the content commits changes to the data model, the `onCommit` handler will 
 Resuming SCORM Sessions
 -----------------------
 
-When you need to resume the session, call `load`
+When you need to resume the session, call `load` before you launch the content.
 
 ```javascript
+	let driver = new Barnacle.ScormDriver();
+	
+	driver.attach( window );
+
+	driver.load( {
+		"cmi.suspend_data"          :    "[124,252,358,469,121,254,322]",
+		"cmi.completion_status"     :    "incomplete",
+		"cmi.success_status"        :    "unknown"
+	}, "SCORM 2004 4th Edition" );
+
+	driver.launch( "/index_lms.html" ); // Resume where you left off.
+
 ```
 
 
